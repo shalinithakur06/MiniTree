@@ -29,7 +29,7 @@ class MyMuon
   TString muName;
   MyLorentzVector p4; 
   int type;
-  Point3D    vertex;   
+  Point3D  vertex;   
 
   ///id
   //Loose

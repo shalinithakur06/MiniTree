@@ -12,7 +12,6 @@ myMiniTreeProducer = cms.EDAnalyzer("MiniTreeProducer",
                                     Electrons = BaseElectronsSet,
                                     Jets = BaseJetsSet,
                                     Mets = BaseMetsSet,
-                                    KineFit = BaseKFPSet,
                                     rhoCorSrc = cms.InputTag("kt6PFJetsForIso","rho"),
                                     minEventQualityToStore = cms.int32(0)
                                     )

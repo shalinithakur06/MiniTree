@@ -85,8 +85,8 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        #scaleFactorsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer12_V1_MC_JER_SF_AK5PFchs.txt')
                        #resolutionsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_PtResolution_AK4PF.txt"),
                        #scaleFactorsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_SF_AK4PF.txt")
-                       resolutionsFile = cms.string("Spring16_25nsV10_MC_PtResolution_AK4PF.txt"),
-                       scaleFactorsFile= cms.string("Spring16_25nsV10_MC_SF_AK4PF.txt")
+                       resolutionsFile = cms.string("Spring16_25nsV10_MC_PtResolution_AK8PF.txt"),
+                       scaleFactorsFile= cms.string("Spring16_25nsV10_MC_SF_AK8PF.txt")
                        )
 
 #my base values for met selection ------------------------------------------------
@@ -102,26 +102,3 @@ BaseMCTruthSet = cms.PSet( isData = cms.bool(False),
                        jpMatchSources = cms.VInputTag("selectedPatJetsByRef", "selectedPatJetsAK5JPTByRef", "selectedPatJetsAK5PFByRef", "selectedPatJetsPFlowByRef")
                        )
 
-BaseKFPSet = cms.PSet(sources = cms.VInputTag("kinFitTtSemiLepEvent:Leptons","kinFitTtSemiLepEvent:Neutrinos","kinFitTtSemiLepEvent:PartonsHadB","kinFitTtSemiLepEvent:PartonsHadP","kinFitTtSemiLepEvent:PartonsHadQ","kinFitTtSemiLepEvent:PartonsLepB","kinFitTtSemiLepEventJESUp:Leptons","kinFitTtSemiLepEventJESUp:Neutrinos","kinFitTtSemiLepEventJESUp:PartonsHadB","kinFitTtSemiLepEventJESUp:PartonsHadP","kinFitTtSemiLepEventJESUp:PartonsHadQ","kinFitTtSemiLepEventJESUp:PartonsLepB","kinFitTtSemiLepEventJESDown:Leptons","kinFitTtSemiLepEventJESDown:Neutrinos","kinFitTtSemiLepEventJESDown:PartonsHadB","kinFitTtSemiLepEventJESDown:PartonsHadP","kinFitTtSemiLepEventJESDown:PartonsHadQ","kinFitTtSemiLepEventJESDown:PartonsLepB","kinFitTtSemiLepEventJERUp:Leptons","kinFitTtSemiLepEventJERUp:Neutrinos","kinFitTtSemiLepEventJERUp:PartonsHadB","kinFitTtSemiLepEventJERUp:PartonsHadP","kinFitTtSemiLepEventJERUp:PartonsHadQ","kinFitTtSemiLepEventJERUp:PartonsLepB","kinFitTtSemiLepEventJERDown:Leptons","kinFitTtSemiLepEventJERDown:Neutrinos","kinFitTtSemiLepEventJERDown:PartonsHadB","kinFitTtSemiLepEventJERDown:PartonsHadP","kinFitTtSemiLepEventJERDown:PartonsHadQ","kinFitTtSemiLepEventJERDown:PartonsLepB"),
-                      njetsUsed = cms.InputTag("kinFitTtSemiLepEvent:NumberOfConsideredJets"),
-                      chi2OfFit = cms.InputTag("kinFitTtSemiLepEvent:Chi2"),
-                      probOfFit = cms.InputTag("kinFitTtSemiLepEvent:Prob"),
-                      statusOfFit = cms.InputTag("kinFitTtSemiLepEvent:Status"),
-                      njetsUsedUp = cms.InputTag("kinFitTtSemiLepEventJESUp:NumberOfConsideredJets"),
-                      chi2OfFitUp = cms.InputTag("kinFitTtSemiLepEventJESUp:Chi2"),
-                      probOfFitUp = cms.InputTag("kinFitTtSemiLepEventJESUp:Prob"),
-                      statusOfFitUp = cms.InputTag("kinFitTtSemiLepEventJESUp:Status"),
-                      njetsUsedDown = cms.InputTag("kinFitTtSemiLepEventJESDown:NumberOfConsideredJets"),
-                      chi2OfFitDown = cms.InputTag("kinFitTtSemiLepEventJESDown:Chi2"),
-                      probOfFitDown = cms.InputTag("kinFitTtSemiLepEventJESDown:Prob"),
-                      statusOfFitDown = cms.InputTag("kinFitTtSemiLepEventJESDown:Status"),
-                      njetsUsedJERUp = cms.InputTag("kinFitTtSemiLepEventJERUp:NumberOfConsideredJets"),
-                      chi2OfFitJERUp = cms.InputTag("kinFitTtSemiLepEventJERUp:Chi2"),
-                      probOfFitJERUp = cms.InputTag("kinFitTtSemiLepEventJERUp:Prob"),
-                      statusOfFitJERUp = cms.InputTag("kinFitTtSemiLepEventJERUp:Status"),
-                      njetsUsedJERDown = cms.InputTag("kinFitTtSemiLepEventJERDown:NumberOfConsideredJets"),
-                      chi2OfFitJERDown = cms.InputTag("kinFitTtSemiLepEventJERDown:Chi2"),
-                      probOfFitJERDown = cms.InputTag("kinFitTtSemiLepEventJERDown:Prob"),
-                      statusOfFitJERDown = cms.InputTag("kinFitTtSemiLepEventJERDown:Status"),
-                      runKineFitter = cms.bool(False)
-                      )
