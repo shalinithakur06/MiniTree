@@ -14,7 +14,7 @@ inFile = "/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-ma
 #inFile = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
 
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(-1)
+process.maxEvents.input = cms.untracked.int32(1000)
 #for multi CRAB
 process.TFileService.fileName = cms.string("outFile_.root")
 

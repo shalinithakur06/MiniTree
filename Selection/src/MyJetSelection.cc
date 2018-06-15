@@ -16,7 +16,6 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
   pfjetIDFunctor_ = PFJetIDSelectionFunctor(configParamsJets_.getParameter<edm::ParameterSet>("PFJetId") );
   // jet ID handle
   iEvent.getByToken( jetIDMapToken_, hJetIDMap ); // 76x
-  
   try{
     //config parameters
     double minPt = configParamsJets_.getParameter<double>("minPt");

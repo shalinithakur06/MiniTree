@@ -125,7 +125,7 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.iEminusiP = std::abs(1.0 - eSCoverP)*ecal_energy_inverse;
   //expected missing inner hits
   constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
-  newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfHits(missingHitType); 
+  newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfAllHits(missingHitType); 
   //pass conversion veto
   newElectron.isPassConVeto = iEle.passConversionVeto();
   

@@ -9,7 +9,7 @@ isData=False
 #Data
 #inFile = "/store/data/Run2016C/SingleElectron/MINIAOD/03Feb2017-v1/100000/02169BE7-81EB-E611-BB99-02163E0137CD.root"
 #MC
-inFile = "/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root"
+inFile = "/store/mc/RunIIFall17MiniAOD/QCD_Pt-120to170_MuEnrichedPt5_TuneCP5_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/9EB88BFC-67DE-E711-8FEF-0017A477107C.root"
 #inFile = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
 
 process.source.fileNames = [inFile]
@@ -32,7 +32,7 @@ trigpath = ''
 #-----------------------------------------
 process.setName_(procName)
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
-process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6')
+process.GlobalTag.globaltag  = cms.string('94X_mc2017_realistic_v10')
 
 #-----------------------------------------
 #CONFIGURE THE EXTRA MODULE
@@ -56,8 +56,8 @@ process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::'+trigMenu)
 process.myMiniTreeProducer.Trigger.myTrig = "HLT_Ele2"
 process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('electron')
-process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK4PF.txt')
-process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK4PF.txt')
+process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK8PF.txt')
+process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK8PF.txt')
 
 #-----------------------------------------
 #ANALYSIS SEQUENCE
