@@ -15,7 +15,7 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
     int minNDOF = configParamsVertex_.getParameter<int>("minNDOF");
 
     edm::Handle<reco::VertexCollection>vtx_;
-    iEvent.getByToken(vtxSource, vtx_); 
+    iEvent.getByToken(vtxSource, vtx_);
     std::vector<const reco::Vertex *> selVtx; selVtx.clear();
     for(size_t ivtx = 0; ivtx < vtx_->size(); ivtx++){
       const reco::Vertex *vIt = &((*vtx_)[ivtx]);
@@ -30,7 +30,6 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
     }
     //std::sort(selVtx.begin(), selVtx.end(), &sumPtOrder);
     if(selVtx.size())bestPrimVertex_ = selVtx[0];
-
     //fixedGridRhoAll: 
     //https://github.com/cms-analysis/flashgg/blob/e2fac35487f23fe05b20160d7b51f34bd06b0660/Taggers/python/globalVariables_cff.py
     edm::Handle<double>rhoAll;
@@ -45,14 +44,19 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
 	reco::Vertex bsVtx( bs.position(), bs.covariance3D() );
 	refVertex_ = bsVtx;
     */
+    ///////To reject corrupted vertex//////
+    ///if(bestPrimVertex_ != NULL){
+    /////////////////////////////	    
     refPoint_ = bestPrimVertex_->position();
 	refVertex_ = *bestPrimVertex_;
     ///for(size_t ivtx = 0; ivtx < selVtx.size(); ivtx++){
 	  ///const reco::Vertex *vIt = selVtx[ivtx];
 	  const reco::Vertex *vIt = selVtx[0];
       int totVtx = selVtx.size();
+      ///std::cout<<totVtx<<endl;
 	  MyVertex newVertex = MyVertexConverter(*vIt, *rhoAll, totVtx);
 	  selVertices.push_back(newVertex);
+    //}
    /// }
   }catch(std::exception &e){
     std::cout << "[Vertex Selection] : check selection " << e.what() << std::endl;

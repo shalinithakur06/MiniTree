@@ -54,7 +54,9 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   PUInfoTag_ = cc.consumes<vector<PileupSummaryInfo> >(edm::InputTag("slimmedAddPileupInfo"));
   GenParticle_ = cc.consumes<reco::GenParticleCollection>(edm::InputTag("prunedGenParticles"));
   externalLHEProducer_ = cc.consumes<LHEEventProduct>(edm::InputTag("externalLHEProducer"));
- 
+  ///////////////
+  genEventInfo_ = cc.consumes<GenEventInfoProduct>(edm::InputTag("generator"));
+ ////////////////
   std::string code = configParamsMC_.getParameter<std::string>("sampleCode");
   cout<<"code = "<<code<<endl;
   inputch = configParamsMC_.getParameter<std::string>("sampleChannel");
@@ -260,7 +262,9 @@ void MyEventSelection::BookHistos()
   myhistos_["trueintimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueintimepu", "intime pileup", 6000, 0., 1000.); 
   myhistos_["trueoutoftimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueoutoftimepu", "out of time pileup",6000,0.,1000.); 
   myhistos_["truetotalpu"] = dirs_[dirs_.size() - 1].make<TH1D>("truetotalpu", "total pileup", 6000, 0., 1000.);
-
+  ////////////////
+  myhistos_["genWeight"] = dirs_[dirs_.size() - 1].make<TH1D>("genWeight", "gen weight", 10, -5., 5.);
+ ///////////////////
   ///Jets
   TString jetrawtag="Jets";
   std::string jettag(jetrawtag);
@@ -271,29 +275,6 @@ void MyEventSelection::BookHistos()
   myhistos_["phi_"+jetrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("phi_"+jetrawtag, "Jet #phi", 80, -4.05, 3.95);
   myhistos_["emf_"+jetrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("emf_"+jetrawtag, "Jet emf", 120, 0, 1.02);
   myhistos_["JER_"+jetrawtag]  = dirs_[dirs_.size() - 1].make<TH1D>("JER_"+jetrawtag, "Jet resolution", 100, 0, 5);
-  ////https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTaggingEffAnalyzer.cc
-  double ptNBins = 100;
-  double ptMin = 0;
-  double ptMax = 1000;
-  double etaNBins = 50;
-  double etaMin = -5;
-  double etaMax = 5;
-  //Total b, c and other jets
-  myhistos2_["h2_BTaggingEff_Denom_b_"+jetrawtag]    = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Denom_b", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Denom_c_"+jetrawtag]    = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Denom_c", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Denom_udsg_"+jetrawtag] = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Denom_udsg", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  //Loose BTag efficiency 2D histos          
-  myhistos2_["h2_BTaggingEff_Num_bL_"+jetrawtag]      = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_bL", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Num_cL_"+jetrawtag]      = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_cL", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Num_udsgL_"+jetrawtag]   = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_udsgL", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  //Medium BTag efficiency 2D histos          
-  myhistos2_["h2_BTaggingEff_Num_bM_"+jetrawtag]      = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_bM", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Num_cM_"+jetrawtag]      = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_cM", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Num_udsgM_"+jetrawtag]   = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_udsgM", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  //Tight BTag efficiency 2D histos          
-  myhistos2_["h2_BTaggingEff_Num_bT_"+jetrawtag]      = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_bT", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Num_cT_"+jetrawtag]      = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_cT", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
-  myhistos2_["h2_BTaggingEff_Num_udsgT_"+jetrawtag]   = dirs_[dirs_.size() - 1].make<TH2D>("h2_BTaggingEff_Num_udsgT", ";p_{T} [GeV];#eta", ptNBins, ptMin, ptMax, etaNBins, etaMin, etaMax);
   
   ///Electrons
   TString elerawtag="Electrons";

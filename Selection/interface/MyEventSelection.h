@@ -208,6 +208,9 @@ private:
   // MC and PU
   edm::EDGetTokenT<vector<PileupSummaryInfo>> PUInfoTag_;
   edm::EDGetTokenT<reco::GenParticleCollection> GenParticle_;
+  ////////////////////
+  edm::EDGetTokenT<GenEventInfoProduct> genEventInfo_;
+  ////////////////
   edm::EDGetTokenT<LHEEventProduct> externalLHEProducer_;
 
   //JET id functors

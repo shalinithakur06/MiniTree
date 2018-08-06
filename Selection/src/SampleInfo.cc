@@ -4,6 +4,7 @@ SampleInfo::SampleInfo()
 {
   sampleName="";
   mcEvtType = 0;
+  gen_weight = 1.0;
   pileup.clear();
   truepileup.clear();
   ///puWeights.clear();

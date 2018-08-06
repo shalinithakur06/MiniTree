@@ -205,8 +205,23 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
       mcInfo.topPtWeights = topPtW;
     }
   }
+
+/////////////////////////////////////////////////////////////////////////
+///am@nlo -ve weights
+//https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMCatNLOInterface
+////////////////////////////////////////////////////////////////////////
+  edm::Handle<GenEventInfoProduct> genEventInfo;
+  iEvent.getByToken(genEventInfo_, genEventInfo); 
+  
+  double genwt = genEventInfo->weight();
+  if(genwt>0) mcInfo.gen_weight = 1.0;
+  else mcInfo.gen_weight = -1.0;
+
+  //cout<<"genEventInfo->weight()   : "<<genEventInfo->weight()<<"         "<<"mcInfo.gen_weight  : "<< mcInfo.gen_weight<<endl;
+  myhistos_["genWeight"]->Fill(mcInfo.gen_weight);
   
   return mcInfo;
+//////////////////////////////////////////////////////////////////////
 }
 
 //----------------------------------------------
@@ -389,4 +404,6 @@ int MyEventSelection::assignTTEvent(const edm::Event& iEvent, const edm::EventSe
   else if(quarkCounter == 0 && tauCounter == 2) {ttChannel = MyEvent::TTTAUTAU;}
   return ttChannel;
 }
+////////////////////////////
+
 

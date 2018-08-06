@@ -24,7 +24,7 @@ class SampleInfo
   //particle status
   std::vector<int>hepISTUP;
   std::vector<double>topPtWeights;
-  
+  double gen_weight;
  private :
 
 };

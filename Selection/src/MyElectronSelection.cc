@@ -35,7 +35,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     //get triger match
     //edm::Handle< pat::TriggerEvent > triggerEvent;
     //iEvent.getByToken(TrigEvent_, triggerEvent );
-    
+   
     //get electrons
     TString rawtag="Electrons";
     TString tag(rawtag);//std::string tag(rawtag);
@@ -71,6 +71,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         if(!passConvVeto) passId = false;
 
         //Rel comb PF iso with EA
+	newElectron.eleRho = rho_;
 	    newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
         if(newElectron.relCombPFIsoEA > maxRelCombPFIsoEA) passIso = false;
         
@@ -105,6 +106,7 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   reco::SuperClusterRef sc = iEle.superCluster();
   double electronSCEta = sc->eta();
   newElectron.p4.SetCoordinates(iEle.px(), iEle.py(), iEle.pz(), iEle.energy());
+  //std::cout << "iEle.energy() =" << iEle.energy()<< endl;
   newElectron.eleSCEta = electronSCEta;
   newElectron.vertex.SetCoordinates(iEle.vx(), iEle.vy(), iEle.vz());
   
@@ -114,6 +116,12 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   
   ///sel 
   newElectron.sigmaIetaIeta = iEle.full5x5_sigmaIetaIeta();
+  newElectron.energy5x5 = iEle.e5x5();
+  newElectron.energy2x5 = iEle.e2x5Max();
+  newElectron.isEcalDriven = iEle.ecalDrivenSeed();
+  newElectron.GsfEleEmHadD1IsoRhoCut = iEle.dr03EcalRecHitSumEt() + iEle.dr03HcalDepth1TowerSumEt();
+
+
   //abs(dEtaInSeed)
   newElectron.dEtaInSeed = iEle.superCluster().isNonnull() && iEle.superCluster()->seed().isNonnull() ?iEle.deltaEtaSuperClusterTrackAtVtx() - iEle.superCluster()->eta() + iEle.superCluster()->seed()->eta() : std::numeric_limits<float>::max();
   //abs(dPhiIn)
@@ -121,14 +129,18 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.hadOverEm = iEle.hadronicOverEm();
   //abs(1/E-1/p) 
   const float ecal_energy_inverse = 1.0/iEle.ecalEnergy();
+  //std::cout << "iEle.ecalEnergy()=" << iEle.ecalEnergy() << endl;
   const float eSCoverP = iEle.eSuperClusterOverP();
   newElectron.iEminusiP = std::abs(1.0 - eSCoverP)*ecal_energy_inverse;
   //expected missing inner hits
   constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
   newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfHits(missingHitType); 
+  newElectron.nInnerLostHits = iEle.gsfTrack()->hitPattern().numberOfLostTrackerHits(missingHitType); 
   //pass conversion veto
   newElectron.isPassConVeto = iEle.passConversionVeto();
-  
+
+
+
   ///ids
   newElectron.isEE = iEle.isEB();
   newElectron.isEB = iEle.isEE();
@@ -164,6 +176,7 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.PileupIso = pfiso[3];
   newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
   newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
+  newElectron.eleTrkPt = iEle.dr03TkSumPt();
   return newElectron;
 }
 
