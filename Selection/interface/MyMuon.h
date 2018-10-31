@@ -49,7 +49,11 @@ class MyMuon
   int nMuonHits;
   int nPixelHits;
   int nTrackerLayers;
- 
+  
+  //High Pt
+  double bestMuPtErr; 
+  double bestMuPtTrack;
+
   ///iso
   double ChHadIso; 
   double NeuHadIso;  

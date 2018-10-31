@@ -111,7 +111,9 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   newMuon.trkKink = iMuon.combinedQuality().trkKink;
   //Tight
   newMuon.nMatchedStations = iMuon.numberOfMatchedStations();
-  
+  //High Pt
+  newMuon.bestMuPtErr = iMuon.muonBestTrack()->ptError();
+  newMuon.bestMuPtTrack = iMuon.muonBestTrack()->pt();
   ///iso
   std::vector<double> pfiso = defaultPFMuonIsolation(iMuon); 
   newMuon.ChHadIso = pfiso[0]; 

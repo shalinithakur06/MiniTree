@@ -29,8 +29,11 @@ MyMuon::MyMuon():
   nMuonHits(-9),
   nPixelHits(-9),
   nTrackerLayers(-9),
-  
-  ///iso
+ 
+  //High Pt
+  bestMuPtErr(-9),
+  bestMuPtTrack(-9),
+  //iso
   ChHadIso(-9.),  
   NeuHadIso(-9.),   
   pfRelIso(-9.), 
