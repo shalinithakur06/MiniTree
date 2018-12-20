@@ -140,6 +140,39 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   pfjetid.set(false);
   newJet.jetIDLoose = pfjetIDFunctor_( iJet, pfjetid );
 
+  //https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTaggingEffAnalyzer.cc
+  //2D histos to calculate Btag efficiency
+  double partonFlavor = newJet.partonFlavour;
+  double csv = iJet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+  double csvL = 0.5426;
+  double csvM = 0.8484;
+  double csvT = 0.9535;
+  //b-quarks
+  if( abs(partonFlavor)==5 ){
+    myhistos2_["h2_BTagEff_Denom_b_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvL ) myhistos2_["h2_BTagEff_Num_bL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvM ) myhistos2_["h2_BTagEff_Num_bM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvT ) myhistos2_["h2_BTagEff_Num_bT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+  //c-quarks
+  else if( abs(partonFlavor)==4 ){
+    myhistos2_["h2_BTagEff_Denom_c_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvL ) myhistos2_["h2_BTagEff_Num_cL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvM ) myhistos2_["h2_BTagEff_Num_cM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvT ) myhistos2_["h2_BTagEff_Num_cT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+  //other quarks and gluon
+  else{
+    myhistos2_["h2_BTagEff_Denom_udsg_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvL ) myhistos2_["h2_BTagEff_Num_udsgL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvM ) myhistos2_["h2_BTagEff_Num_udsgM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvT ) myhistos2_["h2_BTagEff_Num_udsgT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+ //btag : https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
+  std::map<std::string, double> discr; discr.clear();
+  discr["pfCombinedInclusiveSecondaryVertexV2BJetTags"] = iJet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+  newJet.bDiscriminator = discr;
+
   //JECs
   std::map<std::string, double>jetCorrections; jetCorrections.clear();
   const std::vector<std::string> jeclevels = iJet.availableJECLevels();

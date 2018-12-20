@@ -11,8 +11,8 @@
 class MyMCParticle 
 {
  public:
-  MyMCParticle();
-  ~MyMCParticle();
+  //MyMCParticle();
+  //~MyMCParticle();
   
   void Reset();
   

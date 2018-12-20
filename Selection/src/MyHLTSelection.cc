@@ -7,7 +7,6 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
 
   //  edm::InputTag hlt_ = configParamshlt_.getParameter<edm::InputTag>("source");
   std::vector<std::string> myTrigNames = configParamshlt_.getParameter<std::vector<std::string> >("bits");
-  std::string myTrig = configParamshlt_.getParameter<std::string>("myTrig");
 
   edm::Handle<edm::TriggerResults> hltresults;
   iEvent.getByToken(hlt_, hltresults); // 76x
@@ -37,12 +36,9 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
     
     bool passTrig = false;
     std::string trigName=TrigNames_.triggerName(itr);
-    if(trigName.find(myTrig) != string::npos) passTrig = true;
-    /*
-    if(myTrigNames.size() > 0){
-      if(find(myTrigNames.begin(), myTrigNames.end(), trigName) == myTrigNames.end()) continue = true;
+    for(unsigned int i = 0; i<myTrigNames.size(); i++){
+      if(trigName.find(myTrigNames[i]) != string::npos) passTrig = true;
     }
-    */
     if(passTrig) hltPaths.push_back(trigName);
   }
   return hltPaths;

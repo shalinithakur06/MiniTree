@@ -3,8 +3,7 @@ import FWCore.ParameterSet.Config as cms
 #my base values for trigger bit selection -------------------
 #BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
 BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT2"),
-                           bits = cms.vstring('HLT_IsoMu24','HLT_Ele27_WPTight_Gsf','HLT_JetE30_NoBPTX'),
-                           myTrig = cms.string('HLT_IsoMu24')
+                           bits = cms.vstring('HLT_IsoMu24','HLT_Ele27_WPTight_Gsf')
                            )
 
 #my base values for vertex selection ---------------------------------
