@@ -18,7 +18,7 @@ inFile = "/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia
 #inFile="/store/mc/RunIISummer16MiniAODv2/ExcitedLepton_MuMuZ-250_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/20000/FED7B442-0980-E811-8144-A0369F301924.root"
 #inFile="/store/mc/RunIISummer16MiniAODv2/ExcitedLepton_MuMuZ-250_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/20000/E8C3C588-0980-E811-A3D5-0242AC130002.root"
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(1000)
+process.maxEvents.input = cms.untracked.int32(100000)
 #for multi CRAB
 process.TFileService.fileName = cms.string("outFile_.root")
 
