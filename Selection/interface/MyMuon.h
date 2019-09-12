@@ -28,6 +28,7 @@ class MyMuon
   //std::string name;
   TString muName;
   MyLorentzVector p4; 
+  MyLorentzVector Genp4; 
   int type;
   Point3D  vertex;   
 

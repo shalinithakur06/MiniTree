@@ -67,6 +67,7 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
       newMuon.gen_mother_id = gen->mother()->pdgId();
   }
   newMuon.p4.SetCoordinates(iMuon.px(), iMuon.py(), iMuon.pz(), iMuon.p());
+  //newMuon.Genp4.SetCoordinates(gen->px(), gen->py(), gen->pz(), gen->p());
   newMuon.type = iMuon.type();
   newMuon.vertex.SetCoordinates(iMuon.vx(), iMuon.vy(), iMuon.vz()); 
   myhistos_["pt_"+dirtag]->Fill(iMuon.pt());

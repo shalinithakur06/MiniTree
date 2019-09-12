@@ -176,6 +176,10 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.PileupIso = pfiso[3];
   newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
   newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
+  //std::cout<<"---------------------"<<std::endl;
+  //std::cout<<"newElectron.D0 = "<<newElectron.D0<<endl;
+  //std::cout<<"newElectron.Dz = "<<newElectron.Dz<<endl;
+
   newElectron.eleTrkPt = iEle.dr03TkSumPt();
   return newElectron;
 }

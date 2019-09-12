@@ -57,6 +57,7 @@ void MyMuon::Reset()
   gen_mother_id = 0;
   muName = "";
   p4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
+  Genp4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
   type = 0;
   vertex.SetCoordinates(0.0, 0.0, 0.0);
   
