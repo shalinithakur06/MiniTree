@@ -123,15 +123,7 @@ public:
   std::vector<MyMuon> getMuons(const edm::Event&, const edm::EventSetup&);
   MyMuon MyMuonConverter(const pat::Muon&, TString&);
  
-  MyTrack myTrackConverter(const reco::TransientTrack&);
-  MyTrack myTrackConverter(const reco::Track&);
-  MyTrack myTrackConverter(const reco::PFCandidate&);
-
-  std::vector<MyMCParticle> getMCParticles(const edm::Event&);
-  int findMother(std::vector<MyMCParticle>,const reco::Candidate*);
-  MyMET mcMET;
   SampleInfo getSampleInfo(const edm::Event&, const edm::EventSetup&);
-  
   static bool sumPtOrder(const reco::Vertex *, const reco::Vertex *);
   std::vector<double> defaultMuonIsolation(const pat::Muon&, bool isPF=false);
   std::vector<double> defaultPFMuonIsolation(const pat::Muon&);

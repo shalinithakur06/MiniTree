@@ -1,6 +1,9 @@
 import FWCore.ParameterSet.Config as cms
 
 from MiniTree.Selection.ObjectSelectors_cfi import *
+allEventsFilter = cms.EDFilter(
+    "AllEventsFilter"
+    )
 
 # base configuration ----------------------------------------
 myMiniTreeProducer = cms.EDAnalyzer("MiniTreeProducer",

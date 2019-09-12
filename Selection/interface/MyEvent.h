@@ -28,12 +28,10 @@
 #include "TString.h"
 #include "MiniTree/Selection/interface/MyJet.h"
 #include "MiniTree/Selection/interface/MyMET.h"
-#include "MiniTree/Selection/interface/MyTrack.h"
 #include "MiniTree/Selection/interface/MyVertex.h"
 #include "MiniTree/Selection/interface/MyElectron.h"
 #include "MiniTree/Selection/interface/MyMuon.h"
 //#include "MiniTree/Selection/interface/MyTau.h"
-#include "MiniTree/Selection/interface/MyMCParticle.h"
 #include "MiniTree/Selection/interface/SampleInfo.h"
 
 class MyEvent
@@ -113,9 +111,7 @@ class MyEvent
   std::vector<MyJet> Jets;
 //  std::vector<MyTau> Taus;
   std::vector<MyMET> mets;
-  //std::vector<MyTrack> tracks;
   std::vector<MyVertex> PrimaryVtxs;
-  std::vector<MyMCParticle> mcParticles;
   MyMET mcMET;
   SampleInfo sampleInfo;
   

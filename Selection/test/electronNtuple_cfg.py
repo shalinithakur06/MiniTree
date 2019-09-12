@@ -45,7 +45,7 @@ defineBasePreSelection(process,False, False)
 #-----------------------------
 # ADD THE ANALYSIS MODULE 
 #-----------------------------
-process.load('MiniTree.Selection.selection_cfi')
+process.load('MiniTree.Selection.EventSelectors_cfi')
 process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
 if isData:
     process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("DATA")

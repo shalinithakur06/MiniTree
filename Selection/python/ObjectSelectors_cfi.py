@@ -16,23 +16,6 @@ BaseVertexSet = cms.PSet( vertexSource = cms.InputTag("offlineSlimmedPrimaryVert
                           useBeamSpot = cms.bool(True)
                           )
 
-#my base values for tracks selection ----------------------------------
-BaseTrackSet = cms.PSet( source = cms.InputTag("generalTracks"),
-                         dedxSource = cms.InputTag("dedxHarmonic2"),
-                         minPt = cms.double(1),
-                         maxEta = cms.double(2.5),
-                         minQuality = cms.int32(2),
-                         maxD0 = cms.double(400),
-                         maxTrackChi2 = cms.double(10),
-                         minTrackValidHits = cms.int32(5),
-                         minPixelHits = cms.int32(1),
-                         minPrimaryVertexWeight = cms.double(0),
-                         minDeltaRtoLepton = cms.double(0.1),
-                         trackIsoCone = cms.double(0.3),
-                         maxPtSumInTrackIsoCone = cms.double(10)
-                         )
-
-
 #my base values for muon selection ---------------------------------------
 BaseMuonsSet =  cms.PSet( sources = cms.InputTag("slimmedMuons"),
                           #triggerEvent = cms.InputTag("patTriggerEvent"),

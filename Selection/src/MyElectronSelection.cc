@@ -32,10 +32,6 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     edm::Handle<reco::BeamSpot> theBeamSpot;
     iEvent.getByToken(beamSpotToken_,theBeamSpot);
     
-    //get triger match
-    //edm::Handle< pat::TriggerEvent > triggerEvent;
-    //iEvent.getByToken(TrigEvent_, triggerEvent );
-   
     //get electrons
     TString rawtag="Electrons";
     TString tag(rawtag);//std::string tag(rawtag);
@@ -50,26 +46,10 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
         
         //Make selections
-        bool passKin = true, passId = true, passIso = true;
+        bool passKin = true, passIso = true;
 	    if(newElectron.p4.Et() < minEt || 
 	       fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
         
-        /* 
-        //trigger_ele_pt
-        std::string tagS(tag);
-        std::string labelMatcher = tagS+triggerMatch;
-        pat::helper::TriggerMatchHelper tmhelper;
-        const pat::TriggerObjectRef objRef(tmhelper.triggerMatchObject( ieles, iEle, labelMatcher, iEvent, *triggerEvent));
-        if(objRef.isAvailable()){
-          newElectron.trigger_ele_pt = objRef->pt();
-        }
-        */
-	    
-        //isPassConversion tool
-        bool passConvVeto = !ConversionTools::hasMatchedConversion(eIt, conversions, theBeamSpot->position());
-        newElectron.passConversionVeto = passConvVeto ;
-        if(!passConvVeto) passId = false;
-
         //Rel comb PF iso with EA
 	newElectron.eleRho = rho_;
 	    newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
@@ -77,10 +57,8 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         
         int quality = 0;
 	    if(passKin)quality  = 1;
-        if(passId)quality |= 1<<1;
         if(passIso)quality |= 1<<2;
 	    newElectron.quality = quality;
-	    //if(passKin && passId && passIso)selElectrons.push_back(newElectron);
 	    if(passKin)selElectrons.push_back(newElectron);
       }//for loop
     }
@@ -134,12 +112,10 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.iEminusiP = std::abs(1.0 - eSCoverP)*ecal_energy_inverse;
   //expected missing inner hits
   constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
-  newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfHits(missingHitType); 
+  newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfAllHits(missingHitType); 
   newElectron.nInnerLostHits = iEle.gsfTrack()->hitPattern().numberOfLostTrackerHits(missingHitType); 
   //pass conversion veto
   newElectron.isPassConVeto = iEle.passConversionVeto();
-
-
 
   ///ids
   newElectron.isEE = iEle.isEB();
