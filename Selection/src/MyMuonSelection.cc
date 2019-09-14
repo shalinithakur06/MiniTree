@@ -13,11 +13,8 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
   selMuons.clear();
   
   try{
-    //passKin
     double maxEta = configParamsMuons_.getParameter<double>("maxEta");
     double minPt = configParamsMuons_.getParameter<double>("minPt");
-    //passIso
-    double maxRelIso = configParamsMuons_.getParameter<double>("maxRelIso");
     TString rawtag="Muons";
     //std::string tag(rawtag);
     TString tag(rawtag);
@@ -28,23 +25,9 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  const pat::Muon mIt = ((*imuons)[iMuon]);
 	  MyMuon newMuon = MyMuonConverter(mIt, rawtag);
 	  newMuon.muName = tag;
-	  //make selections
-	  bool passKin = true, passId = true, passIso = true;
-	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) passKin = false;
-      //id
-	  bool isGlobal=false;
-	  if(mIt.isGlobalMuon() && mIt.isTrackerMuon())isGlobal=true;
-	  if(!isGlobal)passId = false;
-      //iso
-	  if(newMuon.pfRelIso > maxRelIso)passIso = false;
-      int quality = 0;
-	  if(passKin)quality  = 1; // quality = 0000 0000 0000 0001 = 1
-	  if(passId)quality |= 1<<1;// quality =  0000 0000 0000 0001 | 0000 0000 0000 0010 = 3
-	  if(passIso)quality |= 1<<2;// quality = 0000 0000 0000 0011 | 0000 0000 0000 0100 = 7
-	  newMuon.quality = quality;
-	  //if(passKin && passId && passIso) selMuons.push_back(newMuon);
-	  if(passKin) selMuons.push_back(newMuon);
-	  }
+	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) 
+	  selMuons.push_back(newMuon);
+      }
     }
   }catch(std::exception &e){
     std::cout << "[Muon Selection] : check selection " << e.what() << std::endl;
@@ -70,10 +53,6 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   //newMuon.Genp4.SetCoordinates(gen->px(), gen->py(), gen->pz(), gen->p());
   newMuon.type = iMuon.type();
   newMuon.vertex.SetCoordinates(iMuon.vx(), iMuon.vy(), iMuon.vz()); 
-  myhistos_["pt_"+dirtag]->Fill(iMuon.pt());
-  myhistos_["eta_"+dirtag]->Fill(iMuon.eta());
-  myhistos_["phi_"+dirtag]->Fill(iMuon.phi());
-  
   ///id
   //Loose
   newMuon.isGlobalMuon = iMuon.isGlobalMuon();
@@ -87,17 +66,12 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
     if(!gmTrack.isNull()){
       newMuon.normChi2 = gmTrack->normalizedChi2();
       newMuon.nMuonHits = gmTrack->hitPattern().numberOfValidMuonHits();
-      myhistos_["normChi2_"+dirtag]->Fill(gmTrack->normalizedChi2());
-      myhistos_["nHits_"+dirtag]->Fill(gmTrack->numberOfValidHits());
-      myhistos_["nMuonHits_"+dirtag]->Fill(newMuon.nMuonHits);
       }
     //best track
     const reco::TrackRef bmTrack = iMuon.muonBestTrack();
     if(!bmTrack.isNull()){
       newMuon.D0 = fabs(bmTrack->dxy(refVertex_.position())); 
       newMuon.Dz = fabs(bmTrack->dz(refVertex_.position()));
-      myhistos_["D0_"+dirtag]->Fill(newMuon.D0);
-      myhistos_["Dz_"+dirtag]->Fill(newMuon.Dz);
       }
     //inner track
     const reco::TrackRef imTrack = iMuon.innerTrack();

@@ -22,7 +22,6 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
 
   // Muon
   Muonsources = cc.consumes<pat::MuonCollection>(configParamsMuons_.getParameter<edm::InputTag>("sources")); 
-  TrigEvent_ = cc.consumes<pat::TriggerEvent>(configParamsJets_.getParameter<edm::InputTag>("triggerEvent"));
 
   // Elctrons
   Elesources = cc.consumes<pat::ElectronCollection>(configParamsElectrons_.getParameter<edm::InputTag>("sources"));
@@ -52,7 +51,6 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
  ////////////////
   std::string code = configParamsMC_.getParameter<std::string>("sampleCode");
   cout<<"code = "<<code<<endl;
-  inputch = configParamsMC_.getParameter<std::string>("sampleChannel");
   if(code!=std::string("DATA")) { isData_=false; }
   else{ isData_=true; inputDataSampleCode_ = MyEvent::DATA; }
 }

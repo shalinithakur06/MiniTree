@@ -10,11 +10,9 @@ myMiniTreeProducer = cms.EDAnalyzer("MiniTreeProducer",
                                     MCTruth = BaseMCTruthSet,
                                     Trigger = BaseTriggerSet,
                                     Vertex = BaseVertexSet,
-                                    Tracks = BaseTrackSet,
                                     Muons = BaseMuonsSet,
                                     Electrons = BaseElectronsSet,
                                     Jets = BaseJetsSet,
                                     Mets = BaseMetsSet,
-                                    rhoCorSrc = cms.InputTag("kt6PFJetsForIso","rho"),
                                     minEventQualityToStore = cms.int32(0)
                                     )

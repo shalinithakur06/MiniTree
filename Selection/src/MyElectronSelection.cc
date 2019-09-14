@@ -11,13 +11,9 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
   using namespace std; 
   std::vector<MyElectron> selElectrons; 
   selElectrons.clear();
-  
   try{
-    //std::string id = configParamsElectrons_.getParameter<std::string>("id");
-    double maxRelCombPFIsoEA = configParamsElectrons_.getParameter<double>("maxRelCombPFIsoEA");
     double minEt = configParamsElectrons_.getParameter<double>("minEt");
     double maxEta = configParamsElectrons_.getParameter<double>("maxEta");
-    std::string triggerMatch = configParamsElectrons_.getParameter<std::string>("triggerMatch");  
     
     //Compute the rho, for relCombPFIsoEAcorr
     edm::Handle<double> hRho;
@@ -41,25 +37,19 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     
     if(ieles.isValid()){
       for(size_t iEle = 0; iEle < ieles->size(); iEle++){
-	    const pat::Electron eIt = ((*ieles)[iEle]);
-	    MyElectron newElectron = MyElectronConverter(eIt, rawtag);
+	const pat::Electron eIt = ((*ieles)[iEle]);
+	MyElectron newElectron = MyElectronConverter(eIt, rawtag);
         newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
-        
-        //Make selections
-        bool passKin = true, passIso = true;
-	    if(newElectron.p4.Et() < minEt || 
-	       fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
-        
+        //isPassConversion tool
+	/*
+        bool passConvVeto = !ConversionTools::hasMatchedConversion(eIt, conversions, theBeamSpot->position());
+        newElectron.passConversionVeto = passConvVeto ;
+	*/
         //Rel comb PF iso with EA
 	newElectron.eleRho = rho_;
-	    newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
-        if(newElectron.relCombPFIsoEA > maxRelCombPFIsoEA) passIso = false;
-        
-        int quality = 0;
-	    if(passKin)quality  = 1;
-        if(passIso)quality |= 1<<2;
-	    newElectron.quality = quality;
-	    if(passKin)selElectrons.push_back(newElectron);
+	newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
+	if(newElectron.p4.Et() < minEt ||fabs(newElectron.p4.Eta()) > maxEta)
+	  selElectrons.push_back(newElectron);
       }//for loop
     }
   }catch(std::exception &e){
@@ -87,19 +77,12 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   //std::cout << "iEle.energy() =" << iEle.energy()<< endl;
   newElectron.eleSCEta = electronSCEta;
   newElectron.vertex.SetCoordinates(iEle.vx(), iEle.vy(), iEle.vz());
-  
-  myhistos_["pt_"+dirtag]->Fill(iEle.pt());
-  myhistos_["eta_"+dirtag]->Fill(iEle.eta());
-  myhistos_["phi_"+dirtag]->Fill(iEle.phi());
-  
   ///sel 
   newElectron.sigmaIetaIeta = iEle.full5x5_sigmaIetaIeta();
   newElectron.energy5x5 = iEle.e5x5();
   newElectron.energy2x5 = iEle.e2x5Max();
   newElectron.isEcalDriven = iEle.ecalDrivenSeed();
   newElectron.GsfEleEmHadD1IsoRhoCut = iEle.dr03EcalRecHitSumEt() + iEle.dr03HcalDepth1TowerSumEt();
-
-
   //abs(dEtaInSeed)
   newElectron.dEtaInSeed = iEle.superCluster().isNonnull() && iEle.superCluster()->seed().isNonnull() ?iEle.deltaEtaSuperClusterTrackAtVtx() - iEle.superCluster()->eta() + iEle.superCluster()->seed()->eta() : std::numeric_limits<float>::max();
   //abs(dPhiIn)
@@ -112,38 +95,13 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.iEminusiP = std::abs(1.0 - eSCoverP)*ecal_energy_inverse;
   //expected missing inner hits
   constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
-  newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfAllHits(missingHitType); 
+  //newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfAllHits(missingHitType); 
   newElectron.nInnerLostHits = iEle.gsfTrack()->hitPattern().numberOfLostTrackerHits(missingHitType); 
   //pass conversion veto
   newElectron.isPassConVeto = iEle.passConversionVeto();
-
   ///ids
   newElectron.isEE = iEle.isEB();
   newElectron.isEB = iEle.isEE();
-  std::map<std::string, float> eidWPs; eidWPs.clear();
-  const std::vector<pat::Electron::IdPair> & eids = iEle.electronIDs();
-  int iid_cic = 0, iid_vbtf=0;
-  for(size_t id = 0; id < eids.size(); id++){
-    std::string id_name = eids[id].first;
-    double id_value = eids[id].second;
-    eidWPs[id_name] = id_value;
-    if(id_name.find("MC") != std::string::npos){
-      iid_cic++;
-      if(int(id_value) & 0x1){
-        myhistos_["cic_id_"+dirtag]->Fill(iid_cic);
-      }
-      //myhistos_["cic_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_cic+1, id_name.c_str());
-    }
-    else{
-      iid_vbtf++;
-      if(int(id_value) & 0x1){
-        myhistos_["vbtf_id_"+dirtag]->Fill(iid_vbtf);
-      }
-      //myhistos_["vbtf_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_vbtf+1, id_name.c_str());
-   }
-  }
-  newElectron.eidWPs = eidWPs;
-
   ///iso
   std::vector<double> pfiso = defaultPFElectronIsolation(iEle);
   newElectron.ChHadIso = pfiso[0]; 
@@ -152,10 +110,6 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.PileupIso = pfiso[3];
   newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
   newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
-  //std::cout<<"---------------------"<<std::endl;
-  //std::cout<<"newElectron.D0 = "<<newElectron.D0<<endl;
-  //std::cout<<"newElectron.Dz = "<<newElectron.Dz<<endl;
-
   newElectron.eleTrkPt = iEle.dr03TkSumPt();
   return newElectron;
 }
@@ -182,6 +136,5 @@ float MyEventSelection::relCombPFIsoWithEAcorr(const pat::Electron& iEle, double
   const float nhad = pfIso.sumNeutralHadronEt;
   const float pho = pfIso.sumPhotonEt;
   const float relCombPFIsoEAcorr = (chad + std::max(0.0, nhad + pho - rho_* EffArea_))/iEle.pt();
-  myhistos_["relCombPFIsoEA_"+dirtag]->Fill(relCombPFIsoEAcorr); 
   return relCombPFIsoEAcorr;
 }

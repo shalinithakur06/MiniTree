@@ -11,21 +11,14 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
   using namespace std; 
   std::vector<MyJet> selJets; 
   selJets.clear();
-  
-  jetIDFunctor_ = JetIDSelectionFunctor(configParamsJets_.getParameter<edm::ParameterSet>("CaloJetId") );
-  pfjetIDFunctor_ = PFJetIDSelectionFunctor(configParamsJets_.getParameter<edm::ParameterSet>("PFJetId") );
-  // jet ID handle
   iEvent.getByToken( jetIDMapToken_, hJetIDMap ); // 76x
-  
+  //config parameters
+  double minPt = configParamsJets_.getParameter<double>("minPt");
+  double maxEta = configParamsJets_.getParameter<double>("maxEta");
   try{
-    //config parameters
-    double minPt = configParamsJets_.getParameter<double>("minPt");
-    double maxEta = configParamsJets_.getParameter<double>("maxEta");
-    
     TString rawtag="Jets";
     //std::string tag(rawtag);
     TString tag(rawtag);
-    
     edm::Handle<pat::JetCollection>ijets;
     iEvent.getByToken( Jetsources, ijets);  
     //Jet resolution and scale factors
@@ -38,60 +31,46 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     //cout<<"m_resolutions_file = "<<m_resolutions_file<<endl;
     resolution = JME::JetResolution(m_resolutions_file);
     res_sf = JME::JetResolutionScaleFactor(m_scale_factors_file);
-    
     if(ijets.isValid()){
       edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
       //get the jet corrector parameters collection from the globaltag
       std::string uncType("PF");
-      iSetup.get<JetCorrectionsRecord>().get("AK5"+uncType,JetCorParColl);
+      iSetup.get<JetCorrectionsRecord>().get("AK8"+uncType,JetCorParColl);
       // get the uncertainty parameters from the collection
       JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"]; 
       // instantiate the jec uncertainty object
       JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar); 
-      
       for(size_t iJet = 0; iJet < ijets->size(); iJet++){
         const pat::Jet jIt = ((*ijets)[iJet]);
         //Jet resolution and scale factors
         JME::JetParameters parameters_5 = {{JME::Binning::JetPt, jIt.pt()}, {JME::Binning::JetEta, jIt.eta()}, {JME::Binning::Rho, *rho}};
         float reso = resolution.getResolution(parameters_5);
         float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, jIt.eta()}});
-        
         MyJet newJet = MyJetConverter(jIt, rawtag, reso);
         newJet.jetName = tag;
         newJet.scaleFactor = sf;
         newJet.resolution = reso; 
-        
         //JEC uncertainty
         jecUnc->setJetEta(jIt.eta());
         jecUnc->setJetPt(jIt.pt());  
         float JECUncertainty = jecUnc->getUncertainty(true);
         newJet.JECUncertainty = JECUncertainty;
         //make selections
-        bool passKin = true, passId = true;
-        if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)passKin = false;
-        if(!(newJet.jetIDLoose)) passId = false;
-        
-        int quality = 0;
-        if(passKin)quality  = 1;
-        if(passId)quality |= 1<<1;
-        newJet.quality = quality;
-        //if(passKin && passId) selJets.push_back(newJet);
-        if(passKin) selJets.push_back(newJet);
+        if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)
+        selJets.push_back(newJet);
       } // for loop
       delete jecUnc;
       fs_->cd();
-	}
+    }
   }catch(std::exception &e){
     std::cout << "[Jet Selection] : check selection " << e.what() << std::endl;
   }
   return selJets;
 }
 
-MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, double JER)
-{
+MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, double JER){
   MyJet newJet;
   newJet.Reset();
-
   ///basic
   const reco::GenJet *genJet = iJet.genJet();
   if(genJet){
@@ -107,21 +86,14 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
       newJet.parton_mother_id = genParton->mother()->pdgId();
     }
   }
-  myhistos_["pt_"+dirtag]->Fill(iJet.pt());
-  myhistos_["eta_"+dirtag]->Fill(iJet.eta());
-  myhistos_["phi_"+dirtag]->Fill(iJet.phi());
-  myhistos_["JER_"+dirtag]->Fill(JER);
   newJet.ak8Tau1 = iJet.userFloat("NjettinessAK8:tau1"); 
   newJet.ak8Tau2 = iJet.userFloat("NjettinessAK8:tau2"); 
   newJet.ak8Tau3 = iJet.userFloat("NjettinessAK8:tau3"); 
   newJet.ak8Pmass = iJet.userFloat("ak8PFJetsCHSPrunedMass");
-  
   newJet.partonFlavour = double(iJet.partonFlavour());
   newJet.hadronFlavour = double(iJet.hadronFlavour());
-  
   //vertex.fCoordinates.fXYZ are zero, in the MINIAOD
   newJet.vertex.SetCoordinates(iJet.vx(), iJet.vy(), iJet.vz());
-  
   ///ids
   if(iJet.isPFJet())
     {     
@@ -135,11 +107,6 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
       newJet.neutralMultiplicity = iJet.neutralMultiplicity();
       myhistos_["emf_"+dirtag]->Fill(iJet.chargedEmEnergyFraction() + iJet.neutralEmEnergyFraction());
     }
-  pat::strbitset jetid = jetIDFunctor_.getBitTemplate();
-  pat::strbitset pfjetid = pfjetIDFunctor_.getBitTemplate();
-  pfjetid.set(false);
-  newJet.jetIDLoose = pfjetIDFunctor_( iJet, pfjetid );
-
   //https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTaggingEffAnalyzer.cc
   //2D histos to calculate Btag efficiency
   double partonFlavor = newJet.partonFlavour;
@@ -172,7 +139,6 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   std::map<std::string, double> discr; discr.clear();
   discr["pfCombinedInclusiveSecondaryVertexV2BJetTags"] = iJet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
   newJet.bDiscriminator = discr;
-
   //JECs
   std::map<std::string, double>jetCorrections; jetCorrections.clear();
   const std::vector<std::string> jeclevels = iJet.availableJECLevels();
@@ -186,21 +152,6 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   }
   newJet.JECs = jetCorrections;
   newJet.JECUncertainty = 1.0;  //default, get it later from CondDB.
-  //SV
-  //http://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_8_0_25/doc/html/dd/dc2/PatBasicFWLiteJetAnalyzer_8cc_source.html
-  const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex("secondaryVertex");
-  if(svTagInfo !=0){
-    for(size_t iv = 0; iv < svTagInfo->nVertices(); iv++){
-      const reco::Vertex& sv = svTagInfo->secondaryVertex(iv);
-      if(!(sv.isFake())){
-	newJet.SVP4.push_back(sv.p4());
-	newJet.SVflightDistance.push_back(svTagInfo->flightDistance(iv).value());
-	newJet.SVflightDistanceErr.push_back(svTagInfo->flightDistance(iv).error());
-	newJet.SVNChi2.push_back(sv.normalizedChi2());
-      }
-    }
-  }
-  //jet id
   return newJet;
 }
 

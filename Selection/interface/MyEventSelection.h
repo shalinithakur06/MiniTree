@@ -224,7 +224,6 @@ private:
   int mcEvtType_;
   int inputDataSampleCode_;
   bool runKineFitter_; 
-  std::string inputch;
 
   //pu re-weighting
   edm::LumiReWeighting LumiWeights_, LumiWeightsDefault_;
