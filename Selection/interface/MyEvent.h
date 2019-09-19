@@ -112,7 +112,6 @@ class MyEvent
 //  std::vector<MyTau> Taus;
   std::vector<MyMET> mets;
   std::vector<MyVertex> PrimaryVtxs;
-  MyMET mcMET;
   SampleInfo sampleInfo;
   
   // ---- Monte Carlo information

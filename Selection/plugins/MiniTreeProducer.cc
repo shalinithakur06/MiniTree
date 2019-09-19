@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-#include "MiniTree/Selection/interface/MiniTreeProducer.h"
+#include "MiniTree/Selection/plugins/MiniTreeProducer.h"
 
 //---------------
 // C++ Headers --
@@ -53,6 +53,8 @@ MiniTreeProducer::MiniTreeProducer(const edm::ParameterSet& ps) : tree_(0)
   pMyevt_data           = pMyevt->getData();
   
   tree_ = tfs_->make<TTree>("MyTree", "MyTree");
+  tree_->SetAutoSave(10000000000);
+  tree_->SetAutoFlush(1000000);
   
   book(ps);
   
@@ -66,15 +68,13 @@ MiniTreeProducer::~MiniTreeProducer()
  
    // do anything here that needs to be done at desctruction time
    // (e.g. close files, deallocate resources etc.)
-
   delete pMyevt;
 
 }
 
 // ------------ method called once each job just before starting event loop  ------------
 void 
-MiniTreeProducer::beginJob()
-{
+MiniTreeProducer::beginJob(){
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
@@ -86,8 +86,6 @@ MiniTreeProducer::endJob() {
 void
 MiniTreeProducer::analyze(const edm::Event& e, const edm::EventSetup& es)
 {
-   //add if "none" ..  
-  //std::cout << "1" <<std::endl;
   analyzeEvent(e, es);    
   
   int eventQuality = pMyevt_data->eventQuality;
@@ -107,40 +105,12 @@ void MiniTreeProducer::analyzeEvent(const edm::Event& e, const edm::EventSetup& 
 // Operations --
 //--------------
 void MiniTreeProducer::book(const edm::ParameterSet& ps) {
-
   //book tree
    int bufsize = 256000;
    int split   = 1;
    tree_->Branch("MyEvent", "MyEvent", &pMyevt_data, bufsize, split);
-
-  //book histograms
-   //histos_["cutflow"] = tfs_->make<TH1D>("cutflow", "cutflow", 20, 0., 20.);
-  
   //pMyevt->BookHistos(tfs_);
   pMyevt->BookHistos();
-
-  /*
-    //this works, but not needed
-  std::vector<edm::InputTag> sources = ps.getParameter<edm::ParameterSet>("Jets").getParameter<std::vector<edm::InputTag> >("sources");
-  for(std::vector<edm::InputTag>::iterator sit = sources.begin();
-      sit != sources.end();
-      sit++)
-    {
-      TString rawtag=sit->label();
-      rawtag.ReplaceAll("pat","");
-      rawtag.ReplaceAll("cleanPat","");
-      rawtag.ReplaceAll("selectedPat","");
-      std::string tag(rawtag);
-      
-      //Make a new TDirectory
-      tdirs_.push_back( tfs_->mkdir(tag.c_str()) );
-      //tdtags_.push_back(rawtag);
-      //tdirs_[tdirs_.size() - 1].cd();
-	  
-      histos_["JetPt_"+rawtag] = tdirs_[tdirs_.size() - 1].make<TH1D>("JetPt_"+rawtag, "JetPt", 100, 0., 500.);
-      tfs_->cd();
-    }
-  */
 }
 
 //define this as a plug-in

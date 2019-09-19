@@ -1,6 +1,11 @@
 import FWCore.ParameterSet.Config as cms
 
 #my base values for trigger bit selection -------------------
+#my MC truth matching sets -------------------------------------------------------
+BaseMCTruthSet = cms.PSet( isData = cms.bool(False),
+                       sampleCode = cms.string("SEECODES")
+                       )
+
 #BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
 BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT2"),
                            bits = cms.vstring('HLT_IsoMu24','HLT_Ele27_WPTight_Gsf')
@@ -46,8 +51,4 @@ BaseMetsSet = cms.PSet(sources = cms.InputTag("slimmedMETs"),
                        minMET = cms.double(10)
                        )
 
-#my MC truth matching sets -------------------------------------------------------
-BaseMCTruthSet = cms.PSet( isData = cms.bool(False),
-                       sampleCode = cms.string("SEECODES")
-                       )
 

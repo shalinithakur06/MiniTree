@@ -81,7 +81,6 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
       newMuon.nTrackerLayers = imTrack->hitPattern().trackerLayersWithMeasurement(); 
       }
   }
-  
   newMuon.segmentCompatibility = muon::segmentCompatibility(iMuon);
   newMuon.trkKink = iMuon.combinedQuality().trkKink;
   //Tight
@@ -96,7 +95,6 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   newMuon.NeuHadIso = pfiso[2]; 
   newMuon.PileupIso = pfiso[3];
   newMuon.pfRelIso = pfiso[4]; 
-  myhistos_["pfRelIso_"+dirtag]->Fill(pfiso[4]); 
   return newMuon;
 }
 

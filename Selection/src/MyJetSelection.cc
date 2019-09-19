@@ -46,14 +46,14 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         JME::JetParameters parameters_5 = {{JME::Binning::JetPt, jIt.pt()}, {JME::Binning::JetEta, jIt.eta()}, {JME::Binning::Rho, *rho}};
         float reso = resolution.getResolution(parameters_5);
         float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, jIt.eta()}});
-        MyJet newJet = MyJetConverter(jIt, rawtag, reso);
-        newJet.jetName = tag;
-        newJet.scaleFactor = sf;
-        newJet.resolution = reso; 
         //JEC uncertainty
         jecUnc->setJetEta(jIt.eta());
         jecUnc->setJetPt(jIt.pt());  
         float JECUncertainty = jecUnc->getUncertainty(true);
+        MyJet newJet = MyJetConverter(jIt, rawtag, reso);
+        newJet.jetName = tag;
+        newJet.scaleFactor = sf;
+        newJet.resolution = reso; 
         newJet.JECUncertainty = JECUncertainty;
         //make selections
         if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)
@@ -105,7 +105,6 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
       newJet.chargedMultiplicity = iJet.chargedMultiplicity();
       newJet.chargedEmEnergyFraction = iJet.chargedEmEnergyFraction();
       newJet.neutralMultiplicity = iJet.neutralMultiplicity();
-      myhistos_["emf_"+dirtag]->Fill(iJet.chargedEmEnergyFraction() + iJet.neutralEmEnergyFraction());
     }
   //https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTaggingEffAnalyzer.cc
   //2D histos to calculate Btag efficiency

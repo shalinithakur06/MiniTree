@@ -104,7 +104,6 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
   double genwt = genEventInfo->weight();
   if(genwt>0) mcInfo.gen_weight = 1.0;
   else mcInfo.gen_weight = -1.0;
-  myhistos_["genWeight"]->Fill(mcInfo.gen_weight);
   return mcInfo;
 }
 

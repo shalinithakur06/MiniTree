@@ -61,7 +61,6 @@ MyEventSelection::~MyEventSelection()
 
 void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
 {
-  ///es.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
   event_.eventNb = e.id().event();
   event_.lumiblock = e.luminosityBlock();
   event_.isData = isData_;
@@ -72,10 +71,19 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   event_.Electrons = getElectrons(e, es);
   event_.Jets = getJets(e, es);
   event_.mets = getMETs(e, es);
-  //std::cout<<"pass met "<<event_.mets.size()<<std::endl;
   if(!isData_){
     event_.sampleInfo = getSampleInfo(e, es);
   }
+ //make event selection
+  bool passTrig = false;
+  std::vector<std::string> trigs = event_.hlt;
+  for(size_t itrig = 0; itrig < trigs.size(); itrig++){
+    if(trigs[itrig].find("Ele") != std::string::npos || 
+	trigs[itrig].find("Mu") != std::string::npos) passTrig = true;
+  }
+  int EventQuality = 0;
+  if(passTrig)EventQuality++;
+  event_.eventQuality = EventQuality;
   fs_->cd();
 }
 
@@ -84,6 +92,16 @@ void MyEventSelection::BookHistos(){
   initTriggerHistos_ = true;
   //selection
   dirs_.push_back( fs_->mkdir("selection") );
+
+  ///MC
+  dirs_.push_back( fs_->mkdir("MCINFO") );
+  myhistos_["intimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("intimepu", "intime pileup", 6000, 0, 1000);
+  myhistos_["outoftimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("outoftimepu", "out of time pileup", 6000, 0, 1000);
+  myhistos_["totalpu"] = dirs_[dirs_.size() - 1].make<TH1D>("totalpu", "total pileup", 6000, 0, 1000);
+  myhistos_["trueintimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueintimepu", "intime pileup", 6000, 0., 1000.); 
+  myhistos_["trueoutoftimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueoutoftimepu", "out of time pileup",6000,0.,1000.); 
+  myhistos_["truetotalpu"] = dirs_[dirs_.size() - 1].make<TH1D>("truetotalpu", "total pileup", 6000, 0., 1000.);
+
   ////https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTaggingEffAnalyzer.cc
   double ptNBins = 100;
   double ptMin = 0;

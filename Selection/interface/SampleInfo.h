@@ -12,7 +12,6 @@ class SampleInfo
   ~SampleInfo();
   
   std::string sampleName;
-  int mcEvtType;
   std::vector<double>pileup;
   std::vector<double>truepileup;
   ///std::vector<double>puWeights;
