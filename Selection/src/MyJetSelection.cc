@@ -56,7 +56,7 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         newJet.resolution = reso; 
         newJet.JECUncertainty = JECUncertainty;
         //make selections
-        if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)
+        if(jIt.pt() > minPt && fabs(jIt.eta()) < maxEta)
         selJets.push_back(newJet);
       } // for loop
       delete jecUnc;

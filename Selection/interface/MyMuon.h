@@ -48,6 +48,7 @@ class MyMuon
   double Dz;
   int nMatchedStations;
   int nMuonHits;
+  int nMuonHitsTuneP;
   int nPixelHits;
   int nTrackerLayers;
   
@@ -58,11 +59,13 @@ class MyMuon
   ///iso
   double ChHadIso; 
   double NeuHadIso;  
-  double pfRelIso;
   double PhotonIso;  
   double PileupIso;
-  double trigger_mu_pt;
-  int quality;
+  double pfRelIso;
+  double trkRelIso;
+  double expectedMatchedStations;
+  double nStationMask;
+  double nRPCLayers;
  private :
 
 };

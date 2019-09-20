@@ -25,7 +25,7 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  const pat::Muon mIt = ((*imuons)[iMuon]);
 	  MyMuon newMuon = MyMuonConverter(mIt, rawtag);
 	  newMuon.muName = tag;
-	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) 
+	  if(mIt.pt() > minPt && fabs(mIt.eta()) < maxEta) 
 	  selMuons.push_back(newMuon);
       }
     }
@@ -86,8 +86,14 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   //Tight
   newMuon.nMatchedStations = iMuon.numberOfMatchedStations();
   //High Pt
-  newMuon.bestMuPtErr = iMuon.muonBestTrack()->ptError();
-  newMuon.bestMuPtTrack = iMuon.muonBestTrack()->pt();
+  //newMuon.bestMuPtErr = iMuon.muonBestTrack()->ptError();
+  //newMuon.bestMuPtTrack = iMuon.muonBestTrack()->pt();
+  newMuon.bestMuPtErr = iMuon.tunePMuonBestTrack()->ptError();
+  newMuon.bestMuPtTrack = iMuon.tunePMuonBestTrack()->pt();
+  newMuon.expectedMatchedStations = iMuon.expectedNnumberOfMatchedStations();
+  newMuon.nStationMask = iMuon.stationMask();
+  newMuon.nRPCLayers = iMuon.numberOfMatchedRPCLayers(); 
+  newMuon.nMuonHitsTuneP = iMuon.tunePMuonBestTrack()->hitPattern().numberOfValidMuonHits();
   ///iso
   std::vector<double> pfiso = defaultPFMuonIsolation(iMuon); 
   newMuon.ChHadIso = pfiso[0]; 
@@ -95,6 +101,8 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   newMuon.NeuHadIso = pfiso[2]; 
   newMuon.PileupIso = pfiso[3];
   newMuon.pfRelIso = pfiso[4]; 
+  //tracker iso
+  newMuon.trkRelIso = iMuon.isolationR03().sumPt/iMuon.pt();
   return newMuon;
 }
 

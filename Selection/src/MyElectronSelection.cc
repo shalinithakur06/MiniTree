@@ -48,7 +48,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         //Rel comb PF iso with EA
 	newElectron.eleRho = rho_;
 	newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
-	if(newElectron.p4.Et() < minEt ||fabs(newElectron.p4.Eta()) > maxEta)
+	if(newElectron.p4.Et() > minEt && fabs(newElectron.p4.Eta()) < maxEta)
 	  selElectrons.push_back(newElectron);
       }//for loop
     }

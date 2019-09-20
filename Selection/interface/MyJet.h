@@ -37,22 +37,15 @@ class MyJet
   int chargedMultiplicity;
   double chargedEmEnergyFraction; 
   int neutralMultiplicity; //Number of Neutral Particles
-  bool jetIDLoose; 
  
   ///Btag, JEC & SV
   std::map<std::string, double>bDiscriminator;
   std::map<std::string, double>JECs;
   double JECUncertainty;
-  std::vector<MyLorentzVector>SVP4; 
-  std::vector<double>SVflightDistance;
-  std::vector<double>SVflightDistanceErr;
-  std::vector<float>SVNChi2;
   
   //Jet resolution and scale factors
   double scaleFactor;
   double resolution;
-  double triggerJet_pt;
-  int quality;
   //Jet subjetiness and pruned mass
   double ak8Tau1;
   double ak8Tau2;

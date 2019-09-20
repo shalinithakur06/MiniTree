@@ -38,8 +38,6 @@ MyElectron::MyElectron():
   relCombPFIsoEA(-9.),
   D0(-9.),
   Dz(-9.),
-  trigger_ele_pt(0),
-  quality(0),
   passEleID(true),
   passConversionVeto(true)
 {
@@ -90,8 +88,6 @@ void MyElectron::Reset()
   relCombPFIsoEA = -9.; 
   D0 = -9.;
   Dz = -9.;
-  trigger_ele_pt = 0;
-  quality = 0;
   passEleID = true;
   passConversionVeto = true;
 }

@@ -27,6 +27,7 @@ MyMuon::MyMuon():
   Dz(-9.),
   nMatchedStations(-9),
   nMuonHits(-9),
+  nMuonHitsTuneP(-9),
   nPixelHits(-9),
   nTrackerLayers(-9),
  
@@ -36,11 +37,13 @@ MyMuon::MyMuon():
   //iso
   ChHadIso(-9.),  
   NeuHadIso(-9.),   
-  pfRelIso(-9.), 
   PhotonIso(-9.),   
   PileupIso(-9.), 
-  trigger_mu_pt(0),
-  quality(0)
+  pfRelIso(-9.), 
+  trkRelIso(-9.), 
+  expectedMatchedStations(-9.),
+  nStationMask(-9.),
+  nRPCLayers(-9.)
 {
 }
 
@@ -77,6 +80,7 @@ void MyMuon::Reset()
   Dz = -9.;
   nMatchedStations = -9;
   nMuonHits = -9;
+  nMuonHitsTuneP = -9;
   nPixelHits = -9;
   nTrackerLayers = -9;
   
@@ -86,9 +90,11 @@ void MyMuon::Reset()
   ///iso
   ChHadIso = -9.;   
   NeuHadIso = -9.;    
-  pfRelIso = -9.;  
   PhotonIso = -9.;    
   PileupIso = -9.;  
-  trigger_mu_pt = 0;
-  quality = 0;
+  pfRelIso = -9.;  
+  trkRelIso = -9.;  
+  expectedMatchedStations = -9.;
+  nStationMask = -9.;
+  nRPCLayers = -9.;
 }
