@@ -40,8 +40,13 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   m_scale_factors_file = configParamsJets_.getParameter<std::string>("scaleFactorsFile");
   // Mets
   Metsources = cc.consumes<pat::METCollection>(configParamsMETs_.getParameter<edm::InputTag>("sources"));
+  //get MET filters from the event                                    
+  BadChCandFilterToken_ = cc.consumes<bool>(configParamsMETs_.getParameter<edm::InputTag>("filter1"));
+  BadPFMuonFilterToken_ =cc.consumes<bool>(configParamsMETs_.getParameter<edm:: InputTag>("filter2"));
+
   // Trigger
   hlt_ = cc.consumes<edm::TriggerResults>(configParamshlt_.getParameter<edm::InputTag>("source"));
+  hltFilter_ = cc.consumes<edm::TriggerResults>(configParamshlt_.getParameter<edm::InputTag>("sourceFilter"));
   // MC and PU
   PUInfoTag_ = cc.consumes<vector<PileupSummaryInfo> >(edm::InputTag("slimmedAddPileupInfo"));
   GenParticle_ = cc.consumes<reco::GenParticleCollection>(edm::InputTag("prunedGenParticles"));

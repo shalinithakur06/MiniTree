@@ -6,9 +6,10 @@ BaseMCTruthSet = cms.PSet( isData = cms.bool(False),
                        sampleCode = cms.string("SEECODES")
                        )
 
-#BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
-BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT2"),
-                           bits = cms.vstring('HLT_IsoMu24','HLT_Ele27_WPTight_Gsf')
+BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
+                           trigBits = cms.vstring('HLT_IsoMu24'),
+			   sourceFilter = cms.InputTag("TriggerResults"),
+			   metFilterBits = cms.vstring('Flag_goodVertices')
                            )
 
 #my base values for vertex selection ---------------------------------
@@ -48,7 +49,9 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJetsAK8"),
 
 #my base values for met selection ------------------------------------------------
 BaseMetsSet = cms.PSet(sources = cms.InputTag("slimmedMETs"),
-                       minMET = cms.double(10)
+                       minMET = cms.double(10),
+		       filter1 = cms.InputTag('BadChargedCandidateFilter'),
+		       filter2 = cms.InputTag('BadPFMuonFilter')
                        )
 
 
