@@ -34,8 +34,8 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     if(ijets.isValid()){
       edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
       //get the jet corrector parameters collection from the globaltag
-      std::string uncType("PF");
-      iSetup.get<JetCorrectionsRecord>().get("AK8"+uncType,JetCorParColl);
+      //iSetup.get<JetCorrectionsRecord>().get("slimmedJetsAK8PFPuppiSoftDropPacked",JetCorParColl);
+      iSetup.get<JetCorrectionsRecord>().get("AK8PF",JetCorParColl);
       // get the uncertainty parameters from the collection
       JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"]; 
       // instantiate the jec uncertainty object

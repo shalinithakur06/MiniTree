@@ -38,7 +38,7 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
                         )
 
 #my base values for jet selection -----------------------------------------------
-BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJetsAK8"),
+BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJetsAK8"), #slimmedJetsAK8PFPuppiSoftDropPacked
                        dedxSource = cms.InputTag("dedxHarmonic2"),
                        minPt = cms.double(17),
                        maxEta = cms.double(2.5),
